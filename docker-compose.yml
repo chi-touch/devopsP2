@@ -1,0 +1,143 @@
+#services:
+#  postgres:
+#    image: postgres:15-alpine
+#    container_name: my_devip_db
+#    environment:
+#      POSTGRES_USER: ${POSTGRES_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+#      POSTGRES_DB: ${POSTGRES_DB}
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    mem_limit: 128m
+#    prometheus:
+#      image: prom/prometheus
+#      container_name: prometheus
+#      volumes:
+#        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+#      ports:
+#        - "9090:9090"
+#
+#
+#  app:
+#    image: chichia/devip:latest
+#    container_name: my_devip_app
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/devip
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: chichia
+#      SPRING_PROFILES_ACTIVE: prod
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+#    ports:
+#      - "8080:8080"
+#    mem_limit: 128m
+#
+#
+#
+#
+##  app:
+##    image: chichia/devip:latest
+##    container_name: my_devip_app
+##    environment:
+##      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+##      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+##      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+##    depends_on:
+##      - postgres
+##    ports:
+##      - "8080:8080"
+##    mem_limit: 128m
+#
+#volumes:
+#  postgres_data:
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: my_devip_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    mem_limit: 128m
+
+  app:
+    image: chichia/devip:latest
+    container_name: my_devip_app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/devip
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: chichia
+      SPRING_PROFILES_ACTIVE: prod
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ports:
+      - "8080:8080"
+    mem_limit: 128m
+
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    mem_limit: 128m
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    mem_limit: 128m
+
+  cadvisor:
+    image: google/cadvisor:latest
+    ports:
+      - "8081:8080"
+    mem_limit: 128m
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    mem_limit: 128m
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.10.1
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - "5000:5000"
+    mem_limit: 128m
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.1
+    ports:
+      - "5601:5601"
+    mem_limit: 128m
+
+
+
+volumes:
+  postgres_data:
+

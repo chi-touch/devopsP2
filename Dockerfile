@@ -3,5 +3,5 @@ COPY .. .
 RUN mvn -B clean package -DskipTests
 FROM openjdk:17
 COPY --from=build target/*.jar devip.jar
-# ENV SPRING_PROFILES_ACTIVE=$(PROFILE)
+#ENV SPRING_PROFILES_ACTIVE prod
 ENTRYPOINT ["java", "-jar", "-Dserver.port=8080", "devip.jar"]
