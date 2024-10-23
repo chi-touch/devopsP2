@@ -69,10 +69,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     mem_limit: 128m
+    cpus: "0.5"
+    deploy:
+      replicas: 1
 
   app:
     image: chichia/devip:latest
-    container_name: my_devip_app
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/devip
       SPRING_DATASOURCE_USERNAME: postgres
@@ -84,9 +86,20 @@ services:
         max-size: "10m"
         max-file: "3"
     ports:
-      - "8080:8080"
+      - "8086"
     mem_limit: 128m
-
+    cpus: "1.0"
+    deploy:
+      replicas: 3   # Horizontal scaling (number of replicas)
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 128m
+        reservations:
+          cpus: "0.5"
+          memory: 128m
+      restart_policy:
+        condition: on-failure
 
   prometheus:
     image: prom/prometheus
@@ -106,7 +119,7 @@ services:
   cadvisor:
     image: google/cadvisor:latest
     ports:
-      - "8081:8080"
+      - "8081:8081"
     mem_limit: 128m
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -120,7 +133,7 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
-    mem_limit: 128m
+    mem_limit: 512m
 
   logstash:
     image: docker.elastic.co/logstash/logstash:7.10.1
@@ -135,6 +148,38 @@ services:
     ports:
       - "5601:5601"
     mem_limit: 128m
+
 volumes:
   postgres_data:
+
+#  postgres:
+#    image: postgres:15-alpine
+#    container_name: my_devip_db
+#    environment:
+#      POSTGRES_USER: ${POSTGRES_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+#      POSTGRES_DB: ${POSTGRES_DB}
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    mem_limit: 128m
+#
+#  app:
+#    image: chichia/devip:latest
+#    container_name: my_devip_app
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/devip
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: chichia
+#      SPRING_PROFILES_ACTIVE: prod
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+#    ports:
+#      - "8080:8080"
+#    mem_limit: 128m
+
 
