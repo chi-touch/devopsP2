@@ -116,39 +116,6 @@ services:
       - "3000:3000"
     mem_limit: 128m
 
-  cadvisor:
-    image: google/cadvisor:latest
-    ports:
-      - "8081:8081"
-    mem_limit: 128m
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
-    environment:
-      - discovery.type=single-node
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    mem_limit: 512m
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.10.1
-    volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-    ports:
-      - "5000:5000"
-    mem_limit: 128m
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.10.1
-    ports:
-      - "5601:5601"
-    mem_limit: 128m
-
 volumes:
   postgres_data:
 
