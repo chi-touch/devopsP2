@@ -38,7 +38,7 @@
         - name: Build Docker image
           run: docker build -t chichia/devip:latest .
             mvn clean package
-            java -Dspring.profiles.active=prod -jar target/devip.jar
+#            java -Dspring.profiles.active=prod -jar target/devip.jar
 
 
         - name: Push Docker image to Docker Hub
