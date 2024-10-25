@@ -74,6 +74,12 @@ jobs:
 
             # Pull and run the Docker container
             sudo docker pull chichia/devip:latest
+            
+            # Stop and remove the existing container if it exists
+            if sudo docker ps -a --format '{{.Names}}' | grep -Eq "^devip\$"; then
+            sudo docker stop devip
+            sudo docker rm devip
+            fi
 
             # Run the container, passing database connection info as environment variables
             sudo docker run -d -p 8086:8086 --name devip \
