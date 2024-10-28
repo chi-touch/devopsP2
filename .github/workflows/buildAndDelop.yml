@@ -169,18 +169,18 @@ jobs:
             sudo systemctl start docker
             sudo systemctl enable docker
           fi
-
-          # Create Docker network if it doesn't exist
-          if ! docker network ls | grep -q cloud_work; then
-            sudo docker network create cloud_work
-          fi
           
           # Stop and remove any existing application container
           if [ "$(docker ps -aq -f name=devip)" ]; then
-            sudo docker stop devip
-            sudo docker rm devip
+          sudo docker stop devip
+          sudo docker rm -f devip
           fi
-
+          
+          # Create Docker network if it doesn't exist
+          if ! docker network ls | grep -q cloud_network; then
+          sudo docker network create cloud_network
+          fi
+               
           # Stop and remove any existing PostgreSQL container
           if [ "$(docker ps -aq -f name=dev_user_postgres)" ]; then
             sudo docker stop dev_user_postgres
