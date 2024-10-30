@@ -249,6 +249,7 @@ jobs:
         run: docker build -t chichia/devip:latest .
 
       - name: Push Docker image to Docker Hub
+
         run: docker push chichia/devip:latest
 
       - name: Deploy to AWS EC2
