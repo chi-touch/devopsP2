@@ -295,16 +295,16 @@ jobs:
           # Pull and run PostgreSQL container without port binding
           sudo docker run -d --name dev_user_postgres \
             --network cloud_network \
-          
-          
+            -e POSTGRES_DB=dev_clo \
+            -e POSTGRES_USER=dev_user \
+            -e POSTGRES_PASSWORD=chichia \
+            postgres:latest
+
           # Pull the latest application image
           sudo docker pull chichia/devip:latest
 
           # Run the application container, connecting to the PostgreSQL container
-          sudo docker run -d -p 8086:8086 --name devip \          -e POSTGRES_DB=dev_clo \
-            -e POSTGRES_USER=dev_user \
-            -e POSTGRES_PASSWORD=chichia \
-            postgres:latest
+          sudo docker run -d -p 8086:8086 --name devip \
             --network cloud_network \
             -e SPRING_DATASOURCE_URL=jdbc:postgresql://dev_user_postgres:5432/dev_clo \
             -e SPRING_DATASOURCE_USERNAME=dev_user \
