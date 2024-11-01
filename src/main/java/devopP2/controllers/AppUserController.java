@@ -18,6 +18,7 @@ public class AppUserController {
 
     private final AppUserService appUserService;
     @PostMapping("/registerUser")
+
     public ResponseEntity<?> register(@RequestBody AppUserRequest appUserRequest) {
         return ResponseEntity.status(CREATED)
                 .body(appUserService.register(appUserRequest));
