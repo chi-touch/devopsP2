@@ -1,0 +1,16 @@
+- name: Set up PostgreSQL Database
+  hosts: db_server
+  tasks:
+    - name: Ensure PostgreSQL is running
+      docker_container:
+        name: my_devip_db
+        image: postgres:15-alpine
+        state: started
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_USER: "{{ lookup('env', 'POSTGRES_USER') }}"
+          POSTGRES_PASSWORD: "{{ lookup('env', 'POSTGRES_PASSWORD') }}"
+          POSTGRES_DB: "{{ lookup('env', 'POSTGRES_DB') }}"
+        volumes:
+          - postgres_data:/var/lib/postgresql/data

@@ -1,0 +1,15 @@
+- name: Deploy Spring Boot Application
+  hosts: app_server
+  tasks:
+    - name: Ensure application container is running
+      docker_container:
+        name: app
+        image: chichia/devip:latest
+        state: started
+        ports:
+          - "8086"
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://my_devip_db:5432/terraf
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: chichia
+          SPRING_PROFILES_ACTIVE: prod
